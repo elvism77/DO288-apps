@@ -135,7 +135,7 @@ pipeline {
         stage('Wait for deployment in Staging') {
 	    steps {
                 script {
-                    openshift.withCluster() {
+                    openshift.withProject( "${STAGE_PROJECT}" ) {
                         def deployment = openshift.selector("dc", "${APP_NAME}").rollout()
                         openshift.selector("dc", "${APP_NAME}").related('pods').untilEach(1) {
                             return (it.object().status.phase == "Running")
