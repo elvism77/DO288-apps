@@ -135,15 +135,11 @@ pipeline {
         stage('Wait for deployment in Staging') {
 	    steps {
                 script {
-                    routeHost = readFile('routehost').trim()
-
                     openshift.withCluster() {
                         def deployment = openshift.selector("dc", "${APP_NAME}").rollout()
                         openshift.selector("dc", "${APP_NAME}").related('pods').untilEach(1) {
                             return (it.object().status.phase == "Running")
                         }
-
-                        echo "Deployment to Staging env is complete. Access the app at the URL http://${routeHost}."
                     }
                 }
             }
